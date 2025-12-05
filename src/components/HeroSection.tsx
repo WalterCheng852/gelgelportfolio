@@ -71,7 +71,7 @@ export default function HeroSection({ onBookClick }: HeroSectionProps) {
                     muted
                     playsInline
                     className="absolute inset-0 w-full h-full object-cover z-10"
-                    poster="/gallery1.png"
+                    poster="/hand_back.png"
                 >
                     <source src="/hands.mp4" type="video/mp4" />
                 </video>

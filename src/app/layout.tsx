@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_HK, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import BackToTop from "../components/BackToTop";
 
 const notoSansHK = Noto_Sans_HK({
   variable: "--font-noto-sans-hk",
@@ -30,6 +31,7 @@ export default function RootLayout({
         className={`${notoSansHK.variable} ${playfair.variable} antialiased font-sans`}
       >
         {children}
+        <BackToTop />
       </body>
     </html>
   );
