@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
@@ -30,18 +30,120 @@ export default function Navbar({ onBookClick }: NavbarProps) {
         return () => unsubscribe();
     }, [scrollY]);
 
+    // Close mobile menu on scroll
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "unset";
+        }
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, [isMobileMenuOpen]);
+
     const navItems = [
         { href: "#services", label: "服務" },
         { href: "#gallery", label: "作品" },
-        { href: "#policies", label: "須知" },
+        { href: "#booking", label: "預約" },
     ];
 
     return (
         <>
-            {/* Bottom Floating Pill Navbar - Mobile First */}
+            {/* ===== MOBILE NAVBAR - Top fixed with hamburger ===== */}
             <motion.nav
-                className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:top-6 md:bottom-auto"
-                initial={{ y: 100, opacity: 0 }}
+                className="fixed top-0 left-0 right-0 z-50 md:hidden"
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.3 }}
+            >
+                <div className="flex items-center justify-between px-4 py-3 bg-black/20 backdrop-blur-md">
+                    {/* Logo */}
+                    <Link href="/" className="text-white font-semibold text-lg font-[family-name:var(--font-playfair)]">
+                        YS Nails
+                    </Link>
+
+                    {/* Hamburger Button */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white"
+                    >
+                        {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                    </button>
+                </div>
+            </motion.nav>
+
+            {/* ===== MOBILE MENU OVERLAY ===== */}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        className="fixed inset-0 z-40 md:hidden"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        {/* Backdrop */}
+                        <motion.div 
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        />
+                        
+                        {/* Menu Panel */}
+                        <motion.div
+                            className="absolute top-16 left-4 right-4 bg-white/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/50"
+                            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        >
+                            <div className="flex flex-col gap-2">
+                                {navItems.map((item, index) => (
+                                    <motion.div
+                                        key={item.href}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: index * 0.1 }}
+                                    >
+                                        <Link
+                                            href={item.href}
+                                            className="block py-3 px-4 text-lg font-medium text-[#4A4E69] hover:bg-[#E6CCB2]/20 rounded-xl transition-colors"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                                
+                                {/* Book Button in Menu */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="mt-2 pt-4 border-t border-[#E6CCB2]/30"
+                                >
+                                    <button
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            onBookClick?.();
+                                        }}
+                                        className="w-full py-3 px-4 bg-[#4A4E69] text-white rounded-xl font-semibold text-center"
+                                    >
+                                        立即預約
+                                    </button>
+                                </motion.div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ===== DESKTOP NAVBAR - Floating pill ===== */}
+            <motion.nav
+                className="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:block"
+                initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ 
                     type: "spring", 
@@ -74,54 +176,32 @@ export default function Navbar({ onBookClick }: NavbarProps) {
                     />
                     
                     {/* Content */}
-                    <div className="relative flex items-center gap-2 px-2 py-2 md:px-4 md:py-2.5">
-                        {/* Mobile: Icon-based navigation */}
-                        <div className="flex md:hidden items-center gap-1">
-                            {navItems.map((item, index) => (
-                                <motion.div
-                                    key={item.href}
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.6 + index * 0.1 }}
-                                >
-                                    <Link 
-                                        href={item.href}
-                                        className="px-4 py-2 text-sm font-medium text-text-primary/80 hover:text-text-primary hover:bg-latte/30 rounded-full transition-all duration-200"
-                                    >
-                                        {item.label}
-                                    </Link>
-                                </motion.div>
-                            ))}
-                        </div>
+                    <div className="relative flex items-center gap-2 px-4 py-2.5">
+                        {/* Logo */}
+                        <motion.div 
+                            className="font-semibold text-sm tracking-tight text-text-primary font-[family-name:var(--font-playfair)] px-3"
+                            whileHover={{ scale: 1.02 }}
+                        >
+                            YS.NAILS
+                        </motion.div>
 
-                        {/* Desktop: Full navigation */}
-                        <div className="hidden md:flex items-center gap-1">
-                            {/* Logo */}
-                            <motion.div 
-                                className="font-semibold text-sm tracking-tight text-text-primary font-[family-name:var(--font-playfair)] px-3"
-                                whileHover={{ scale: 1.02 }}
+                        <div className="w-px h-4 bg-text-primary/20 mx-2" />
+
+                        {navItems.map((item, index) => (
+                            <motion.div
+                                key={item.href}
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 + index * 0.1 }}
                             >
-                                YS.NAILS
-                            </motion.div>
-
-                            <div className="w-px h-4 bg-text-primary/20 mx-2" />
-
-                            {navItems.map((item, index) => (
-                                <motion.div
-                                    key={item.href}
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3 + index * 0.1 }}
+                                <Link 
+                                    href={item.href} 
+                                    className="relative px-4 py-2 text-sm font-medium text-text-primary/70 hover:text-text-primary rounded-full hover:bg-latte/20 transition-all duration-200"
                                 >
-                                    <Link 
-                                        href={item.href} 
-                                        className="relative px-4 py-2 text-sm font-medium text-text-primary/70 hover:text-text-primary rounded-full hover:bg-latte/20 transition-all duration-200"
-                                    >
-                                        {item.label}
-                                    </Link>
-                                </motion.div>
-                            ))}
-                        </div>
+                                    {item.label}
+                                </Link>
+                            </motion.div>
+                        ))}
 
                         {/* CTA Button */}
                         <motion.button 
@@ -130,57 +210,11 @@ export default function Navbar({ onBookClick }: NavbarProps) {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
-                           
-                            <span className="hidden sm:inline">立即預約</span>
-                            <span className="sm:hidden">預約</span>
+                            立即預約
                         </motion.button>
                     </div>
                 </motion.div>
             </motion.nav>
-
-            {/* Mobile Menu Overlay (Optional - for additional options) */}
-            <AnimatePresence>
-                {isMobileMenuOpen && (
-                    <motion.div
-                        className="fixed inset-0 z-40 md:hidden"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                    >
-                        <motion.div 
-                            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        />
-                        
-                        <motion.div
-                            className="absolute bottom-28 left-1/2 -translate-x-1/2 w-[85%] bg-white/95 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/50"
-                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        >
-                            <div className="flex flex-col gap-3">
-                                {navItems.map((item, index) => (
-                                    <motion.div
-                                        key={item.href}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.1 }}
-                                    >
-                                        <Link
-                                            href={item.href}
-                                            className="block py-3 px-4 text-lg font-medium text-text-primary hover:bg-latte/20 rounded-xl transition-colors"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            {item.label}
-                                        </Link>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </>
     );
 }

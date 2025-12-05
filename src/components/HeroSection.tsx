@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Sparkles, Star, Play, Volume2, VolumeX } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import { motion, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
@@ -8,15 +8,9 @@ interface HeroSectionProps {
     onBookClick: () => void;
 }
 
-// Parallax wrapper component for smooth scrolling effects
-function useParallax(value: MotionValue<number>, distance: number) {
-    return useTransform(value, [0, 1], [-distance, distance]);
-}
-
 export default function HeroSection({ onBookClick }: HeroSectionProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
-    const [isMuted, setIsMuted] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
 
     const { scrollYProgress } = useScroll({
@@ -55,16 +49,9 @@ export default function HeroSection({ onBookClick }: HeroSectionProps) {
     // Handle video playback rate for cinematic feel
     useEffect(() => {
         if (videoRef.current) {
-            videoRef.current.playbackRate = 0.8; // Slow motion for cinematic feel
+            videoRef.current.playbackRate = 0.8;
         }
     }, []);
-
-    const toggleMute = () => {
-        if (videoRef.current) {
-            videoRef.current.muted = !isMuted;
-            setIsMuted(!isMuted);
-        }
-    };
 
     return (
         <section 
@@ -76,12 +63,12 @@ export default function HeroSection({ onBookClick }: HeroSectionProps) {
                 className="absolute inset-0 w-full h-full"
                 style={isMobile ? {} : { y: videoY, scale: videoScale }}
             >
-                {/* Video Element - Always visible, no fallback image covering it */}
+                {/* Video Element - Always muted */}
                 <video
                     ref={videoRef}
                     autoPlay
                     loop
-                    muted={isMuted}
+                    muted
                     playsInline
                     className="absolute inset-0 w-full h-full object-cover z-10"
                     poster="/gallery1.png"
@@ -224,41 +211,38 @@ export default function HeroSection({ onBookClick }: HeroSectionProps) {
                         </motion.div>
                     </motion.div>
 
-                    {/* Right: Floating Card with Parallax */}
+                    {/* Right: Card - Desktop glass, Mobile simple branding */}
                     <motion.div 
-                        className="w-full md:w-1/2 relative h-[35vh] sm:h-[40vh] md:h-[60vh] order-1 md:order-2"
+                        className="w-full md:w-1/2 relative h-auto md:h-[60vh] order-1 md:order-2 flex items-center justify-center"
                         style={isMobile ? {} : { y: cardY }}
                     >
+                        {/* Desktop: Glassmorphism Card */}
                         <motion.div 
-                            className="absolute inset-0 flex items-center justify-center"
-                            style={isMobile ? {} : { rotateY: cardRotate }}
+                            className="hidden md:flex absolute inset-0 items-center justify-center"
+                            style={{ rotateY: cardRotate }}
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.6, duration: 0.8, type: "spring" }}
                         >
-                            {/* Glassmorphism Card */}
                             <motion.div 
-                                className="w-[80%] sm:w-[70%] max-w-[320px] aspect-[3/4] bg-white/10 backdrop-blur-xl rounded-[32px] border border-white/20 shadow-2xl shadow-black/20 overflow-hidden"
+                                className="w-[70%] max-w-[320px] aspect-[3/4] bg-white/10 backdrop-blur-xl rounded-[32px] border border-white/20 shadow-2xl shadow-black/20 overflow-hidden"
                                 whileHover={{ scale: 1.02, rotateY: 5 }}
                                 transition={{ type: "spring", stiffness: 300 }}
                             >
-                                {/* Card Content */}
-                                <div className="w-full h-full flex flex-col items-center justify-center p-6 sm:p-8 relative">
-                                    {/* Decorative gradient */}
+                                <div className="w-full h-full flex flex-col items-center justify-center p-8 relative">
                                     <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-[#E6CCB2]/20 to-transparent" />
                                     
-                                    {/* Logo */}
                                     <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 1 }}
                                         className="relative z-10 text-center"
                                     >
-                                        <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#E6CCB2] to-[#CB997E] flex items-center justify-center shadow-xl shadow-[#CB997E]/30">
-                                            <span className="text-white text-3xl sm:text-4xl font-bold font-[family-name:var(--font-playfair)]">YS</span>
+                                        <div className="w-28 h-28 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#E6CCB2] to-[#CB997E] flex items-center justify-center shadow-xl shadow-[#CB997E]/30">
+                                            <span className="text-white text-4xl font-bold font-[family-name:var(--font-playfair)]">YS</span>
                                         </div>
                                         
-                                        <h3 className="text-white font-semibold text-xl sm:text-2xl mb-2 font-[family-name:var(--font-playfair)]">
+                                        <h3 className="text-white font-semibold text-2xl mb-2 font-[family-name:var(--font-playfair)]">
                                             YS Nails Beauty
                                         </h3>
                                         
@@ -266,7 +250,6 @@ export default function HeroSection({ onBookClick }: HeroSectionProps) {
                                             Diamond Hill, Hong Kong
                                         </p>
 
-                                        {/* Stats */}
                                         <div className="flex items-center justify-center gap-4 text-sm text-white/50">
                                             <div className="flex items-center gap-1">
                                                 <Star className="w-4 h-4 fill-[#E6CCB2] text-[#E6CCB2]" />
@@ -279,21 +262,36 @@ export default function HeroSection({ onBookClick }: HeroSectionProps) {
                                 </div>
                             </motion.div>
                         </motion.div>
+
+                        {/* Mobile: Simple Branding - No Glass Card */}
+                        <motion.div 
+                            className="md:hidden text-center py-8"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4, duration: 0.6 }}
+                        >
+                            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#E6CCB2] to-[#CB997E] flex items-center justify-center shadow-xl shadow-[#CB997E]/30">
+                                <span className="text-white text-2xl font-bold font-[family-name:var(--font-playfair)]">YS</span>
+                            </div>
+                            <h3 className="text-white font-semibold text-lg font-[family-name:var(--font-playfair)]">
+                                YS Nails Beauty
+                            </h3>
+                            <p className="text-white/50 text-xs mt-1">
+                                Diamond Hill, Hong Kong
+                            </p>
+                            <div className="flex items-center justify-center gap-3 mt-3 text-xs text-white/50">
+                                <div className="flex items-center gap-1">
+                                    <Star className="w-3 h-3 fill-[#E6CCB2] text-[#E6CCB2]" />
+                                    <span className="text-white">5.0</span>
+                                </div>
+                                <span>|</span>
+                                <span>Est. 2024</span>
+                            </div>
+                        </motion.div>
                     </motion.div>
 
                 </div>
             </div>
-
-            {/* === VIDEO CONTROLS === */}
-            <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.5 }}
-                onClick={toggleMute}
-                className="absolute bottom-24 md:bottom-8 right-4 md:right-8 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
-            >
-                {isMuted ? <VolumeX className="w-4 h-4 md:w-5 md:h-5" /> : <Volume2 className="w-4 h-4 md:w-5 md:h-5" />}
-            </motion.button>
 
             {/* === SCROLL INDICATOR - Hidden on mobile === */}
             <motion.div
