@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f9f7f2;
+  --foreground: #4a4e69;
+
+  /* Custom Colors - Korean Aesthetic Cafe */
+  --off-white: #f9f7f2;
+  --latte: #e6ccb2;
+  --mocha: #ddb892;
+  --dark-mocha: #cb997e;
+  --coffee: #b08968;
+  --warm-cream: #fdfaf3;
+  --text-primary: #4a4e69;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-noto-sans-hk);
+
+  --color-off-white: var(--off-white);
+  --color-latte: var(--latte);
+  --color-mocha: var(--mocha);
+  --color-dark-mocha: var(--dark-mocha);
+  --color-coffee: var(--coffee);
+  --color-warm-cream: var(--warm-cream);
+  --color-text-primary: var(--text-primary);
+
+  --radius-4xl: 40px;
+  --font-playfair: 'Playfair Display', serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
