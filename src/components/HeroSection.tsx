@@ -6,10 +6,9 @@ import { useRef, useState, useEffect } from "react";
 import { getCalApi } from "@calcom/embed-react";
 
 interface HeroSectionProps {
-    onBookClick: () => void;
 }
 
-export default function HeroSection({ onBookClick }: HeroSectionProps) {
+export default function HeroSection({}: HeroSectionProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isMobile, setIsMobile] = useState(false);
