@@ -3,6 +3,7 @@
 import { ArrowRight, Star } from "lucide-react";
 import { motion, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { getCalApi } from "@calcom/embed-react";
 
 interface HeroSectionProps {
     onBookClick: () => void;
@@ -51,6 +52,14 @@ export default function HeroSection({ onBookClick }: HeroSectionProps) {
         if (videoRef.current) {
             videoRef.current.playbackRate = 0.8;
         }
+    }, []);
+
+    // Initialize Cal.com booking
+    useEffect(() => {
+        (async function () {
+            const cal = await getCalApi({ "namespace": "gel-with-me" });
+            cal("ui", { "hideEventTypeDetails": false, "layout": "month_view" });
+        })();
     }, []);
 
     return (
@@ -197,7 +206,9 @@ export default function HeroSection({ onBookClick }: HeroSectionProps) {
                             className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4"
                         >
                             <motion.button
-                                onClick={onBookClick}
+                                data-cal-namespace="gel-with-me"
+                                data-cal-link="cheng-steven-rgxpcj/gel-with-me"
+                                data-cal-config='{"layout":"month_view"}'
                                 className="group bg-white text-[#4A4E69] px-8 py-4 rounded-full font-semibold text-lg flex items-center gap-3 hover:bg-[#E6CCB2] transition-all duration-300 shadow-2xl shadow-black/20"
                                 whileHover={{ scale: 1.03 }}
                                 whileTap={{ scale: 0.98 }}

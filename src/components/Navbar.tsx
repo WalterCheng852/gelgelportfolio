@@ -4,12 +4,13 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { getCalApi } from "@calcom/embed-react";
+
 
 interface NavbarProps {
-    onBookClick?: () => void;
 }
 
-export default function Navbar({ onBookClick }: NavbarProps) {
+export default function Navbar({}: NavbarProps) {
     const { scrollY } = useScroll();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -41,6 +42,14 @@ export default function Navbar({ onBookClick }: NavbarProps) {
             document.body.style.overflow = "unset";
         };
     }, [isMobileMenuOpen]);
+
+    // Initialize Cal.com booking
+    useEffect(() => {
+        (async function () {
+            const cal = await getCalApi({ "namespace": "gel-with-me" });
+            cal("ui", { "hideEventTypeDetails": false, "layout": "month_view" });
+        })();
+    }, []);
 
     const navItems = [
         { href: "#services", label: "服務" },
@@ -125,10 +134,10 @@ export default function Navbar({ onBookClick }: NavbarProps) {
                                     className="mt-2 pt-4 border-t border-[#E6CCB2]/30"
                                 >
                                     <button
-                                        onClick={() => {
-                                            setIsMobileMenuOpen(false);
-                                            onBookClick?.();
-                                        }}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        data-cal-namespace="gel-with-me"
+                                        data-cal-link="cheng-steven-rgxpcj/gel-with-me"
+                                        data-cal-config='{"layout":"month_view"}'
                                         className="w-full py-3 px-4 bg-[#4A4E69] text-white rounded-xl font-semibold text-center"
                                     >
                                         立即預約
@@ -205,7 +214,9 @@ export default function Navbar({ onBookClick }: NavbarProps) {
 
                         {/* CTA Button */}
                         <motion.button 
-                            onClick={onBookClick}
+                            data-cal-namespace="gel-with-me"
+                            data-cal-link="cheng-steven-rgxpcj/gel-with-me"
+                            data-cal-config='{"layout":"month_view"}'
                             className="flex items-center gap-2 bg-text-primary text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-coffee transition-all duration-200 shadow-lg shadow-text-primary/20"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
