@@ -1,9 +1,24 @@
+'use client';
+
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Clock, Banknote, MapPin } from "lucide-react";
 
 export default function PoliciesSection() {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ["start end", "end start"],
+    });
+    const parallaxY = useTransform(scrollYProgress, [0, 1], [50, -50]);
+    const parallaxOpacity = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
+
     return (
-        <section className="py-24 px-4 bg-off-white">
-            <div className="max-w-3xl mx-auto">
+        <section ref={sectionRef} className="py-24 px-4 bg-off-white overflow-hidden">
+            <motion.div
+                style={{ y: parallaxY, opacity: parallaxOpacity }}
+                className="max-w-3xl mx-auto"
+            >
                 <h2 className="text-3xl font-bold text-center text-text-primary mb-16 tracking-wide">
                     預約須知
                 </h2>
@@ -46,7 +61,7 @@ export default function PoliciesSection() {
                         </p>
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </section>
     );
 }

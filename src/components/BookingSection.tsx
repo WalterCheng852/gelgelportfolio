@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { AlertTriangle, Clock, CreditCard } from "lucide-react";
 import Cal, { getCalApi } from "@calcom/embed-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function BookingSection() {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ["start end", "end start"],
+    });
+    const parallaxY = useTransform(scrollYProgress, [0, 1], [60, -60]);
+    const parallaxOpacity = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
+
     useEffect(() => {
         (async function () {
             const cal = await getCalApi({ namespace: "gel-with-me" });
@@ -14,8 +22,11 @@ export default function BookingSection() {
     }, []);
 
     return (
-        <section id="booking" className="relative py-16 md:py-24 px-4 bg-[#F9F7F2]">
-            <div className="max-w-5xl mx-auto">
+        <section ref={sectionRef} id="booking" className="relative py-16 md:py-24 px-4 bg-[#F9F7F2] overflow-hidden">
+            <motion.div
+                style={{ y: parallaxY, opacity: parallaxOpacity }}
+                className="max-w-5xl mx-auto"
+            >
                 {/* Section Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -77,7 +88,7 @@ export default function BookingSection() {
                         />
                     </div>
                 </motion.div>
-            </div>
+            </motion.div>
         </section>
     );
 }
