@@ -288,20 +288,20 @@ export default function HeroSection({ }: HeroSectionProps) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3, duration: 0.6 }}
                     >
-                        <div className="flex flex-col gap-6 px-4 pt-24 pb-16">
+                        <div className="flex flex-col gap-6 px-4 pt-2 pb-16">
                             <div className="text-left space-y-3">
-                                <span className="inline-flex text-[0.68rem] tracking-[0.3em] uppercase text-white/70">
+                                <span className="inline-flex text-[1rem] tracking-[0.3em] uppercase text-white/70">
                                     Gel · Lash · Facial
                                 </span>
-                                <h3 className="text-white font-semibold tracking-[0.3em]  text-[0.90rem] text-2xl mb-2 font-[family-name:var(--font-playfair)]">
+                                <h3 className="text-white font-semibold tracking-[0.3em]  text-[1.5rem] text-2xl mb-2 font-[family-name:var(--font-playfair)]">
                                     YS Nails Beauty
                                 </h3>
-                                <p className="text-white/80 text-base leading-relaxed">
+                                <p className="text-white/80 text-base text-[1rem] tracking-[0.3em] leading-relaxed">
                                     日系．睫毛．美甲
                                 </p>
                             </div>
 
-                            <div className="bg-white/5 border border-white/15 rounded-[32px] px-6 py-8 backdrop-blur-xl space-y-6">
+                            <div className="bg-white/5 border border-white/15 rounded-[32px] pt-6 px-6 py-8 backdrop-blur-xl space-y-6">
                                 {mobileSpecs.map((spec, index) => (
                                     <div key={spec.label} className="flex flex-col gap-1 text-[0.5rem] tracking-[0.35em]  ">
                                         <span className="text-[0.65rem] tracking-[0.35em] text-white/50 uppercase">
